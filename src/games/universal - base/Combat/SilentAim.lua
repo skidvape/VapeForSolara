@@ -1,4 +1,6 @@
-local mouseClicked
+-- not possible cuz ifykyk
+
+--[[local mouseClicked
 run(function()
 	local SilentAim
 	local Target
@@ -381,4 +383,4 @@ run(function()
 		Darker = true,
 		Visible = false
 	})
-end)
+end)]]
