@@ -17,13 +17,6 @@ ChatSpammer = vape.Categories.Utility:CreateModule({
 						end
 					end))
 				end
-			elseif replicatedStorage:FindFirstChild('DefaultChatSystemChatEvents') then
-				if Hide.Enabled then
-					oldchat = hookfunction(getconnections(replicatedStorage.DefaultChatSystemChatEvents.OnNewSystemMessage.OnClientEvent)[1].Function, function(data, ...)
-						if data.Message:find('ChatFloodDetector') then return end
-						return oldchat(data, ...)
-					end)
-				end
 			else
 				notif('ChatSpammer', 'unsupported chat', 5, 'warning')
 				ChatSpammer:Toggle()
@@ -46,10 +39,6 @@ ChatSpammer = vape.Categories.Utility:CreateModule({
 
 				task.wait(Delay.Value)
 			until not ChatSpammer.Enabled
-		else
-			if oldchat then
-				hookfunction(getconnections(replicatedStorage.DefaultChatSystemChatEvents.OnNewSystemMessage.OnClientEvent)[1].Function, oldchat)
-			end
 		end
 	end,
 	Tooltip = 'Automatically types in chat'
