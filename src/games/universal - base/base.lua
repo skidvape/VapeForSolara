@@ -144,14 +144,14 @@ local function removeTags(str)
 	return (str:gsub('<[^<>]->', ''))
 end
 
---[[local function rakNetCheck(module)
+local function rakNetCheck(module) -- eh some executors like FluxusZ have it, i might keep it in
 	if not (raknet and raknet.add_send_hook and pcall(raknet.add_send_hook, function() end)) then
 		notif(module, 'This feature requires raknet! (risky feature, please do not use on mains.)', 10, 'warning') -- we won't need this as solara doesn't support Raknet anyways :/
 		return false
 	end
 
 	return true
-end]]
+end
 
 local visited, attempted, tpSwitch = {}, {}, false
 local cacheExpire, cache = tick()
