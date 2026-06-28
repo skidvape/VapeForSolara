@@ -491,33 +491,6 @@ run(function()
 		end
 	end
 
-	function whitelist:oldchat(func) -- this is all hook, can't really do anything about it!
-		--[[local msgtable, oldchat = debug.getupvalue(func, 3)
-		if typeof(msgtable) == 'table' and msgtable.CurrentChannel then
-			whitelist.oldchattable = msgtable
-		end
-
-		oldchat = hookfunction(func, function(data, ...)
-			local plr = playersService:GetPlayerByUserId(data.SpeakerUserId)
-			if plr then
-				data.ExtraData.Tags = data.ExtraData.Tags or {}
-				for _, v in self:tag(plr) do
-					table.insert(data.ExtraData.Tags, {TagText = v.text, TagColor = v.color})
-				end
-
-				if data.Message and self:process(data.Message, plr) then
-					data.Message = ''
-				end
-			end
-
-			return oldchat(data, ...)
-		end)
-
-		vape:Clean(function()
-			hookfunction(func, oldchat)
-		end)]]
-	end
-
 	function whitelist:hook()
 		if self.hooked then return end
 		self.hooked = true
