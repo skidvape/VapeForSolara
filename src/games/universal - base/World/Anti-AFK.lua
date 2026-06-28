@@ -16,8 +16,8 @@ AntiAFK = vape.Categories.World:CreateModule({
 			table.clear(connections)]]
 
 			AntiAFK:Clean(lplr.Idled, function()
-				VirtualUser:CaptureController()
-  				VirtualUser:ClickButton2(Vector2.new())
+				virtualUser:CaptureController()
+  				virtualUser:ClickButton2(Vector2.new())
 			end
 		end
 	end,
