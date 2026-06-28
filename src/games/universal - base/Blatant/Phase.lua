@@ -77,7 +77,7 @@ local Functions = {
 		end
 	end,
 	FFlag = function()
-		if teleported then return end
+		if teleported or not setfflag then return end
 		setfflag('AssemblyExtentsExpansionStudHundredth', '-10000')
 		fflag = true
 	end
@@ -94,14 +94,14 @@ Phase = vape.Categories.Blatant:CreateModule({
 				end
 			end))
 
-			if Mode.Value == 'FFlag' then
+			if Mode.Value == 'FFlag' and setfflag then
 				Phase:Clean(lplr.OnTeleport:Connect(function()
 					teleported = true
 					setfflag('AssemblyExtentsExpansionStudHundredth', '30')
 				end))
 			end
 		else
-			if fflag then
+			if fflag and setfflag then
 				setfflag('AssemblyExtentsExpansionStudHundredth', '30')
 			end
 			for part in modified do
