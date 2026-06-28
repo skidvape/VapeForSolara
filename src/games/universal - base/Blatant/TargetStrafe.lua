@@ -1,4 +1,4 @@
-local TargetStrafe
+--[[local TargetStrafe
 local Targets
 local SearchRange
 local StrafeRange
@@ -115,4 +115,4 @@ YFactor = TargetStrafe:CreateSlider({
 	Max = 100,
 	Default = 100,
 	Suffix = '%'
-})
+})]]
