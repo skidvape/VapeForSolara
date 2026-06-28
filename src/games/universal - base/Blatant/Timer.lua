@@ -5,8 +5,10 @@ Timer = vape.Categories.Blatant:CreateModule({
 	Name = 'Timer',
 	Function = function(callback)
 		if callback then
-			setfflag('SimEnableStepPhysics', 'True')
-			setfflag('SimEnableStepPhysicsSelective', 'True')
+			if setfflag then
+				setfflag('SimEnableStepPhysics', 'True')
+				setfflag('SimEnableStepPhysicsSelective', 'True')
+			end
 
 			Timer:Clean(runService.RenderStepped:Connect(function(dt)
 				if Value.Value > 1 then
