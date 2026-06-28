@@ -144,14 +144,14 @@ local function removeTags(str)
 	return (str:gsub('<[^<>]->', ''))
 end
 
-local function rakNetCheck(module)
+--[[local function rakNetCheck(module)
 	if not (raknet and raknet.add_send_hook and pcall(raknet.add_send_hook, function() end)) then
-		notif(module, 'This feature requires raknet! (risky feature, please do not use on mains.)', 10, 'warning')
+		notif(module, 'This feature requires raknet! (risky feature, please do not use on mains.)', 10, 'warning') -- we won't need this as solara doesn't support Raknet anyways :/
 		return false
 	end
 
 	return true
-end
+end]]
 
 local visited, attempted, tpSwitch = {}, {}, false
 local cacheExpire, cache = tick()
@@ -490,8 +490,8 @@ run(function()
 		end
 	end
 
-	function whitelist:oldchat(func)
-		local msgtable, oldchat = debug.getupvalue(func, 3)
+	function whitelist:oldchat(func) -- this is all hook, can't really do anything about it!
+		--[[local msgtable, oldchat = debug.getupvalue(func, 3)
 		if typeof(msgtable) == 'table' and msgtable.CurrentChannel then
 			whitelist.oldchattable = msgtable
 		end
@@ -514,7 +514,7 @@ run(function()
 
 		vape:Clean(function()
 			hookfunction(func, oldchat)
-		end)
+		end)]]
 	end
 
 	function whitelist:hook()
@@ -522,129 +522,30 @@ run(function()
 		self.hooked = true
 
 		if textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-			if getcallbackvalue and restorefunction and hookfunction then
-				local old
-				task.spawn(function()
-					repeat
-						local current = getcallbackvalue(textChatService, 'OnIncomingMessage')
+			task.spawn(function()
+				local old = textChatService.OnIncomingMessage
+				textChatService.OnIncomingMessage = function(data)
+					local data = Instance.new('TextChatMessageProperties')
+	                data.PrefixText = msg.PrefixText
+	                data.Text = msg.Message
 
-						if old ~= current then
-							local hook
-							hook = hookfunction(current, function(...)
-								local msg = ...
-								local data = hook(...)
-								local plr = msg.TextSource and playersService:GetPlayerByUserId(msg.TextSource.UserId)
-
-								if plr then
-									if not (data and data:IsA('TextChatMessageProperties') and data.PrefixText ~= '') then
-										data = Instance.new('TextChatMessageProperties')
-										data.PrefixText = msg.PrefixText
-										data.Text = msg.Text
-									end
-
-									self:newchat(data, plr, msg.Status ~= Enum.TextChatMessageStatus.Success)
-								end
-
-								return data
-							end)
-
-							old = current
-						end
-
-						task.wait(0.1)
-					until vape.Loaded == nil
-
-					if old then
-						restorefunction(old)
+					local plr = msg.TextSource and playersService:GetPlayerByUserId(msg.TextSource.UserId)
+					if plr then
+						self:newchat(data, plr, msg.Status ~= Enum.TextChatMessageStatus.Success)
 					end
-				end)
-			end
-		elseif replicatedStorage:FindFirstChild('DefaultChatSystemChatEvents') then
-			pcall(function()
-				for _, v in getconnections(replicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent) do
-					if v.Function and table.find(debug.getconstants(v.Function), 'UpdateMessagePostedInChannel') then
-						whitelist:oldchat(v.Function)
-						break
-					end
+
+					return data
 				end
 
-				for _, v in getconnections(replicatedStorage.DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent) do
-					if v.Function and table.find(debug.getconstants(v.Function), 'UpdateMessageFiltered') then
-						whitelist:oldchat(v.Function)
-						break
-					end
-				end
+				repeat task.wait() until vape.Loaded == nil
+						
+				textChatService.OnIncomingMessage = old
+				old = nil
 			end)
 		end
 	end
 
 	function whitelist:announce(text)
-		local success, sendToast = pcall(function()
-			local getAppIdHook = getrenv().require(game:GetService('CorePackages').Workspace.Packages._Workspace.AppCommonLib.AppCommonLib.Release.getNumericalApplicationId)
-			local messageBusHook = getrenv().require(game:GetService('CorePackages').Workspace.Packages._Workspace.MessageBus.MessageBus.MessageBus)
-			messageBusHook.getMessageId = function() end
-			hookfunction(getAppIdHook, function()
-				return 0
-			end)
-
-			local localizationService = game:GetService('LocalizationService')
-			local root = game:GetService('CorePackages').Workspace.Packages._Index.NotificationModalsManager.NotificationModalsManager
-			local reactBlox = getrenv().require(root.ReactRoblox)
-			local react = getrenv().require(root.React)
-			local UIBlox = getrenv().require(root.UIBlox)
-			UIBlox.init(getrenv().require(game:GetService('CorePackages').Packages._Index.UIBlox.UIBlox.UIBloxDefaultConfig))
-			local toastDialog = UIBlox.App.Dialog.Toast
-			local localization = getrenv().require(root.InExperienceLocales).Localization
-			local localProvider = getrenv().require(root.Localization).LocalizationProvider
-			local defaultTheme = getrenv().require(root.Style).StyleProviderWithDefaultTheme
-			local renderGui = nil
-
-			local function createToast(content)
-				return react.createElement(localProvider, {
-					localization = localization.new(localizationService.RobloxLocaleId)
-				}, {
-					StyleProvider = react.createElement(defaultTheme, {}, {
-						ToastWrapper = react.createElement('ScreenGui', {
-							IgnoreGuiInset = true,
-							ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-							ResetOnSpawn = false,
-							DisplayOrder = 12
-						}, {
-							Toast = react.createElement(toastDialog, {
-								duration = 20,
-								toastContent = content
-							})
-						})
-					})
-				})
-			end
-
-			return function(content)
-				if not renderGui then
-					local folder = Instance.new('Folder')
-					folder.Name = 'UIBloxToast'
-					folder.Parent = game:GetService('CoreGui')
-					folder.ChildRemoved:Once(function()
-						folder:Destroy()
-						renderGui = nil
-					end)
-
-					renderGui = reactBlox.createRoot(folder)
-				end
-
-				renderGui:render(react.createElement(createToast, content))
-			end
-		end)
-
-		if success then
-			return sendToast({
-				toastTitle = text,
-				iconImage = getcustomasset('newvape/assets/new/vape.png'),
-				swipeUpDismiss = true,
-				onActivated = function() end
-			})
-		end
-
 		local container = Instance.new('TextButton')
 		container.Size = UDim2.new(1, -24, 0, 60)
 		container.Position = UDim2.new(0.5, 0, 0, -60)
@@ -685,10 +586,10 @@ run(function()
 		padding.PaddingRight = UDim.new(0, 12)
 		padding.PaddingTop = UDim.new(0, 12)
 		padding.Parent = holder
-		local mainframe = Instance.fromExisting(holder)
+		local mainframe = Instance.new(holder)
 		mainframe.ClipsDescendants = false
 		mainframe.Parent = holder
-		local listlayout2 = Instance.fromExisting(listlayout)
+		local listlayout2 = Instance.new(listlayout)
 		listlayout2.Parent = mainframe
 		local textframe = Instance.new('Frame')
 		textframe.Size = UDim2.new(1, -48, 0, 22)
