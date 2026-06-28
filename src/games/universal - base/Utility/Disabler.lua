@@ -1,4 +1,4 @@
-local Disabler
+--[[local Disabler
 
 local function characterAdded(char)
 	for _, v in getconnections(char.RootPart:GetPropertyChangedSignal('CFrame')) do
@@ -21,4 +21,4 @@ Disabler = vape.Categories.Utility:CreateModule({
 		end
 	end,
 	Tooltip = 'Disables GetPropertyChangedSignal detections for movement'
-})
+})]]
