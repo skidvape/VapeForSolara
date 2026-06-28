@@ -92,6 +92,8 @@ local function collection(tags, module, customadd, customremove)
 	return objs, cleanFunc
 end
 
+lplr:Kick('no shitlara support yet :/')
+
 local function getItem(check)
 	for _, item in store.inventory do
 		if item.Type == check then
