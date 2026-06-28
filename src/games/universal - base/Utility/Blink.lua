@@ -8,6 +8,11 @@ Blink = vape.Categories.Utility:CreateModule({
 	Name = 'Blink',
 	Function = function(callback)
 		if callback then
+			if not setfflag then
+				vape:Notify('Vape', 'no setfflag function', 2)
+				Blink:Toggle()
+			end
+					
 			local teleported
 			Blink:Clean(lplr.OnTeleport:Connect(function()
 				setfflag('PhysicsSenderMaxBandwidthBps', '38760')
