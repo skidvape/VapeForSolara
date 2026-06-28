@@ -1,4 +1,4 @@
-local Freecam
+--[[local Freecam
 local Value
 local randomkey, module, old = httpService:GenerateGUID(false)
 
@@ -66,4 +66,4 @@ Value = Freecam:CreateSlider({
 	Suffix = function(val)
 		return val == 1 and 'stud' or 'studs'
 	end
-})
+})]]
