@@ -58,7 +58,7 @@ function bundler.Load(game: string)
         makefolder('newvape/libraries/support/'..game)
     end
 
-    bundler.game = downloadFolder('newvape/libraries/support/'..game)
+    bundler.game = downloadFolder('newvape/libraries/support/'..game, true)
 end
 
 return bundler
